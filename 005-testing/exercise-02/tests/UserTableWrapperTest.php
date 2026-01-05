@@ -3,8 +3,11 @@
 namespace Tests;
 
 use App\Classes\UserTableWrapper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(UserTableWrapper::class)]
 class UserTableWrapperTest extends TestCase
 {
 	private UserTableWrapper $table;
@@ -14,12 +17,14 @@ class UserTableWrapperTest extends TestCase
 		$this->table = new UserTableWrapper();
 	}
 	
+	#[DataProvider('insertDataProvider')]
 	public function testInsert( array $values ): void
 	{
 		$this->table->insert( $values );
 		$this->assertContains( $values, $this->table->get() );
 	}
 	
+	#[DataProvider('updateDataProvider')]
 	public function testUpdate( int $id, array $initialValues, array $updateValues, array $expectedResult ): void
 	{
 		$this->table->insert( $initialValues );
@@ -29,6 +34,7 @@ class UserTableWrapperTest extends TestCase
 		$this->assertEquals( $expectedResult, $this->table->get()[ $id ] );
 	}
 	
+	#[DataProvider('deleteDataProvider')]
 	public function testDelete( int $id, array $initialRows, int $expectedCount ): void
 	{
 		foreach ( $initialRows as $row ) {
@@ -40,6 +46,7 @@ class UserTableWrapperTest extends TestCase
 		$this->assertArrayNotHasKey( $id, $this->table->get() );
 	}
 	
+	#[DataProvider('getDataProvider')]
 	public function testGet( array $initialRows, array $expectedResult ): void
 	{
 		foreach ( $initialRows as $row ) {
